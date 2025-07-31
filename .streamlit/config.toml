@@ -1,0 +1,17 @@
+[global]
+developmentMode = false
+
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+maxUploadSize = 200
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#1f77b4"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f8f9fa"
+textColor = "#262730"
