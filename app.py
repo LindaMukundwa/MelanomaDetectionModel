@@ -59,7 +59,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ABCD Feature Extractor Class (from your original code)
+# ABCD Feature Extractor Class that feeds input/images to the models 
 class ABCDFeatureExtractor:
     def __init__(self):
         self.feature_names = [
@@ -97,20 +97,20 @@ class ABCDFeatureExtractor:
         """Segment lesion from background"""
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         _, binary = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        
+
         kernel = np.ones((3, 3), np.uint8)
         binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
         binary = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
-        
+
         contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
+
         if not contours:
             return None
-        
+
         largest_contour = max(contours, key=cv2.contourArea)
         mask = np.zeros(gray.shape, dtype=np.uint8)
         cv2.fillPoly(mask, [largest_contour], 255)
-        
+
         return mask
 
     def _calculate_asymmetry(self, mask):
@@ -200,10 +200,10 @@ def load_models():
         cnn_model = load_model('models/cnn_model.h5')
         abcd_model = load_model('models/abcd_model.h5')
         combined_model = load_model('models/combined_model.h5')
-        
+
         with open('models/abcd_scaler.pkl', 'rb') as f:
             scaler = pickle.load(f)
-        
+
         return cnn_model, abcd_model, combined_model, scaler
     except Exception as e:
         st.error(f"Error loading models: {str(e)}")
@@ -245,7 +245,7 @@ def create_risk_gauge(probability, model_name):
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.75,
                 'value': 70}}))
-    
+
     fig.update_layout(height=300)
     return fig
 
@@ -253,16 +253,16 @@ def create_abcd_radar_chart(features, feature_names):
     """Create radar chart for ABCD features"""
     # Normalize features to 0-1 range for better visualization
     features_norm = (features - features.min()) / (features.max() - features.min() + 1e-6)
-    
+
     fig = go.Figure()
-    
+
     fig.add_trace(go.Scatterpolar(
         r=features_norm,
         theta=feature_names,
         fill='toself',
         name='ABCD Features'
     ))
-    
+
     fig.update_layout(
         polar=dict(
             radialaxis=dict(
@@ -273,27 +273,27 @@ def create_abcd_radar_chart(features, feature_names):
         title="ABCD Feature Analysis",
         height=500
     )
-    
+
     return fig
 
 def display_educational_content():
     """Display educational content about melanoma"""
     st.header(" Understanding Melanoma Detection")
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.subheader("ABCD Rule for Melanoma")
         st.markdown("""
         **A - Asymmetry**: One half doesn't match the other half
-        
+
         **B - Border**: Edges are irregular, ragged, notched, or blurred
-        
+
         **C - Color**: Color is not uniform throughout
-        
+
         **D - Diameter**: Diameter is larger than 6mm (about the size of a pencil eraser)
         """)
-    
+
     with col2:
         st.subheader("When to See a Doctor")
         st.markdown("""
@@ -301,92 +301,92 @@ def display_educational_content():
         - Any mole that changes in size, shape, or color
         - Any mole that bleeds or becomes tender
         - Any suspicious skin lesion
-        
-        **Remember**: This AI tool is for educational purposes only and should not replace professional medical advice.
+
+        **Remember**: This AI tool is for educational purposes only and should not replace professional medical advice. Our model is designed to check for early signs of melanoma. If you believe your chances of having melanoma are high, please consult a doctor as soon as possible.
         """)
 
 def main():
     st.markdown('<h1 class="main-header">🔬 Melanoma Detection AI</h1>', unsafe_allow_html=True)
-    
+
     # Sidebar
     st.sidebar.title("Navigation")
     page = st.sidebar.selectbox("Choose a page", ["Diagnosis", "About", "Educational Content"])
-    
+
     if page == "About":
         st.header("About This Application")
         st.markdown("""
         This application uses advanced AI models to analyze skin lesions for potential melanoma detection.
-        
+
         **Three Models Used:**
         1. **CNN Model**: Analyzes the visual appearance of the lesion
         2. **ABCD Model**: Evaluates specific dermatological features (Asymmetry, Border, Color, Diameter)
         3. **Combined Model**: Integrates both approaches for enhanced accuracy
-        
+
         **Disclaimer**: This tool is for educational and research purposes only. Always consult with a qualified healthcare professional for medical diagnosis and treatment.
         """)
         return
-    
+
     elif page == "Educational Content":
         display_educational_content()
         return
-    
+
     # Main diagnosis page
     st.header("Upload Skin Lesion Image for Analysis")
-    
+
     # Load models
     cnn_model, abcd_model, combined_model, scaler = load_models()
-    
+
     if cnn_model is None:
         st.error("Models could not be loaded. Please check the model files.")
         return
-    
+
     # File uploader
     uploaded_file = st.file_uploader(
-        "Choose an image file", 
+        "Choose an image file",
         type=['png', 'jpg', 'jpeg'],
         help="Upload a clear image of the skin lesion"
     )
-    
+
     if uploaded_file is not None:
         # Display uploaded image
         image = Image.open(uploaded_file)
-        
+
         col1, col2 = st.columns([1, 2])
-        
+
         with col1:
             st.image(image, caption="Uploaded Image", use_column_width=True)
-        
+
         with col2:
             st.subheader("Image Information")
             st.write(f"**Filename:** {uploaded_file.name}")
             st.write(f"**Size:** {image.size}")
             st.write(f"**Format:** {image.format}")
-        
+
         if st.button("Analyze Image", type="primary"):
             with st.spinner("Analyzing image... This may take a moment."):
                 try:
                     # Convert PIL image to numpy array
                     image_rgb = np.array(image.convert('RGB'))
-                    
+
                     # 1. CNN Model Prediction
                     cnn_input = preprocess_image_for_cnn(image)
                     cnn_prediction = cnn_model.predict(cnn_input, verbose=0)[0][0]
-                    
+
                     # 2. ABCD Feature Extraction and Prediction
                     extractor = ABCDFeatureExtractor()
                     abcd_features = extractor.extract_features(image_rgb)
                     abcd_features_scaled = scaler.transform([abcd_features])
                     abcd_prediction = abcd_model.predict(abcd_features_scaled, verbose=0)[0][0]
-                    
+
                     # 3. Combined Model Prediction
                     combined_prediction = combined_model.predict([cnn_input, abcd_features_scaled], verbose=0)[0][0]
-                    
+
                     # Display Results
                     st.header("Analysis Results")
-                    
+
                     # Risk Assessment Cards
                     col1, col2, col3 = st.columns(3)
-                    
+
                     with col1:
                         risk_level, risk_class, color = interpret_risk_level(cnn_prediction)
                         st.markdown(f"""
@@ -396,7 +396,7 @@ def main():
                             <p>Confidence: {cnn_prediction:.1%}</p>
                         </div>
                         """, unsafe_allow_html=True)
-                    
+
                     with col2:
                         risk_level, risk_class, color = interpret_risk_level(abcd_prediction)
                         st.markdown(f"""
@@ -406,7 +406,7 @@ def main():
                             <p>Confidence: {abcd_prediction:.1%}</p>
                         </div>
                         """, unsafe_allow_html=True)
-                    
+
                     with col3:
                         risk_level, risk_class, color = interpret_risk_level(combined_prediction)
                         st.markdown(f"""
@@ -416,38 +416,38 @@ def main():
                             <p>Confidence: {combined_prediction:.1%}</p>
                         </div>
                         """, unsafe_allow_html=True)
-                    
+
                     # Risk Gauges
                     st.subheader("Detailed Risk Assessment")
-                    
+
                     col1, col2, col3 = st.columns(3)
-                    
+
                     with col1:
                         fig_cnn = create_risk_gauge(cnn_prediction, "CNN")
                         st.plotly_chart(fig_cnn, use_container_width=True)
-                    
+
                     with col2:
                         fig_abcd = create_risk_gauge(abcd_prediction, "ABCD")
                         st.plotly_chart(fig_abcd, use_container_width=True)
-                    
+
                     with col3:
                         fig_combined = create_risk_gauge(combined_prediction, "Combined")
                         st.plotly_chart(fig_combined, use_container_width=True)
-                    
+
                     # ABCD Feature Analysis
                     st.subheader("🔍 ABCD Feature Analysis")
-                    
+
                     col1, col2 = st.columns([2, 1])
-                    
+
                     with col1:
                         # Radar chart
                         fig_radar = create_abcd_radar_chart(abcd_features, extractor.feature_names)
                         st.plotly_chart(fig_radar, use_container_width=True)
-                    
+
                     with col2:
                         st.markdown('<div class="feature-box">', unsafe_allow_html=True)
                         st.subheader("Feature Values")
-                        
+
                         # Group features by category
                         feature_groups = {
                             "Asymmetry": abcd_features[:3],
@@ -455,28 +455,28 @@ def main():
                             "Color": abcd_features[5:15],
                             "Diameter": abcd_features[15:17]
                         }
-                        
+
                         for group, values in feature_groups.items():
                             st.write(f"**{group}**: {np.mean(values):.3f}")
-                        
+
                         st.markdown('</div>', unsafe_allow_html=True)
-                    
+
                     # Feature Details Table
                     st.subheader("📋 Detailed Feature Analysis")
-                    
+
                     feature_df = pd.DataFrame({
                         'Feature': extractor.feature_names,
                         'Value': abcd_features,
                         'Normalized': abcd_features_scaled[0]
                     })
-                    
+
                     st.dataframe(feature_df, use_container_width=True)
-                    
+
                     # Clinical Recommendations
                     st.subheader("🏥 Clinical Recommendations")
-                    
+
                     max_risk = max(cnn_prediction, abcd_prediction, combined_prediction)
-                    
+
                     if max_risk < 0.3:
                         st.success("""
                         **Low Risk Assessment**
@@ -501,10 +501,10 @@ def main():
                         - Document any changes with photographs
                         - This requires prompt medical evaluation
                         """)
-                    
+
                     # Download Results
                     st.subheader("Download Results")
-                    
+
                     results_dict = {
                         'CNN_Prediction': float(cnn_prediction),
                         'ABCD_Prediction': float(abcd_prediction),
@@ -513,16 +513,16 @@ def main():
                         'Feature_Names': extractor.feature_names,
                         'Timestamp': pd.Timestamp.now().isoformat()
                     }
-                    
+
                     results_json = pd.Series(results_dict).to_json()
-                    
+
                     st.download_button(
                         label="Download Analysis Results (JSON)",
                         data=results_json,
                         file_name=f"melanoma_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
                         mime="application/json"
                     )
-                    
+
                 except Exception as e:
                     st.error(f"An error occurred during analysis: {str(e)}")
                     st.error("Please try with a different image or check that the image is clear and properly formatted.")
