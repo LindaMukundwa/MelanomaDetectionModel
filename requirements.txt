@@ -1,6 +1,6 @@
 # Requirements for Melanoma Detection AI
 streamlit==1.28.1
-tensorflow-cpu==2.20.0rc0  # Use release candidate for Python 3.13
+tensorflow-cpu>=2.20.0
 opencv-python-headless>=4.8.0
 Pillow>=10.1.0  # Updated for Python 3.13 compatibility
 numpy>=1.26.0  # Updated for Python 3.13 compatibility
