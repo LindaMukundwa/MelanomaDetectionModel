@@ -7,7 +7,7 @@ import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
 from PIL import Image
-import tensorflow as tf
+import keras
 import os
 
 # Set page config FIRST (before any other st commands)
@@ -18,11 +18,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Handle different TensorFlow versions
+# Handle different Keras versions
 try:
-    from tensorflow.keras.models import load_model
-except ImportError:
     from keras.models import load_model
+except ImportError:
+    from tensorflow.keras.models import load_model
 from sklearn.preprocessing import StandardScaler
 import pickle
 import io
@@ -209,9 +209,9 @@ class ABCDFeatureExtractor:
 def load_models():
     try:
         # Load models with standard method
-        cnn_model = tf.keras.models.load_model('models/cnn_model.keras', compile=False)
-        abcd_model = tf.keras.models.load_model('models/abcd_model.keras', compile=False)
-        combined_model = tf.keras.models.load_model('models/combined_model.keras', compile=False)
+        cnn_model = keras.models.load_model('models/cnn_model.keras', compile=False)
+        abcd_model = keras.models.load_model('models/abcd_model.keras', compile=False)
+        combined_model = keras.models.load_model('models/combined_model.keras', compile=False)
         
         # Load scaler
         with open('models/abcd_scaler.pkl', 'rb') as f:
@@ -221,8 +221,8 @@ def load_models():
     
     except Exception as e:
         st.error(f"Error loading models: {str(e)}")
-        st.error("The models were saved with a different TensorFlow version.")
-        st.error("**Solution**: Re-save the models with TensorFlow 2.15.0 or convert them.")
+        st.error("The models were saved with a different Keras version.")
+        st.error("**Solution**: Re-save the models with Keras 2.15.0 or convert them.")
         return None, None, None, None
 
 # Load models

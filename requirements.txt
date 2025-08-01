@@ -1,6 +1,6 @@
 # Requirements for Melanoma Detection AI
 streamlit==1.28.1
-tensorflow-cpu==2.15.0  # Use CPU version for better compatibility
+keras==2.15.0  # Use standalone Keras instead of TensorFlow
 opencv-python-headless==4.8.1.78
 Pillow==10.0.1
 numpy==1.24.3
