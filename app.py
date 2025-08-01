@@ -8,14 +8,9 @@ import plotly.graph_objects as go
 import plotly.express as px
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.models import load_model
-from sklearn.preprocessing import StandardScaler
-import pickle
-import io
-import warnings
-warnings.filterwarnings('ignore')
+import os
 
-# Set page config
+# Set page config FIRST (before any other st commands)
 st.set_page_config(
     page_title="Melanoma Detection AI",
     page_icon="🔬",
@@ -23,9 +18,26 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Handle different TensorFlow versions
+try:
+    from tensorflow.keras.models import load_model
+except ImportError:
+    from keras.models import load_model
+from sklearn.preprocessing import StandardScaler
+import pickle
+import io
+import warnings
+warnings.filterwarnings('ignore')
+
 # Custom CSS for better styling
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barrio&family=Imperial+Script&family=Indie+Flower&family=Lavishly+Yours&family=Loved+by+the+King&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Monoton&family=Roboto+Slab:wght@100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+    * {
+        font-family: "Source Code Pro", monospace;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
     .main-header {
         font-size: 3rem;
         color: #1f77b4;
@@ -59,7 +71,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ABCD Feature Extractor Class (from your original code)
+# ABCD Feature Extractor Class 
 class ABCDFeatureExtractor:
     def __init__(self):
         self.feature_names = [
@@ -195,20 +207,31 @@ class ABCDFeatureExtractor:
 # Load models and scaler
 @st.cache_resource
 def load_models():
-    """Load all trained models and scaler"""
     try:
-        cnn_model = load_model('models/cnn_model.h5')
-        abcd_model = load_model('models/abcd_model.h5')
-        combined_model = load_model('models/combined_model.h5')
+        # Load models with standard method
+        cnn_model = tf.keras.models.load_model('models/cnn_model.keras', compile=False)
+        abcd_model = tf.keras.models.load_model('models/abcd_model.keras', compile=False)
+        combined_model = tf.keras.models.load_model('models/combined_model.keras', compile=False)
         
+        # Load scaler
         with open('models/abcd_scaler.pkl', 'rb') as f:
             scaler = pickle.load(f)
         
         return cnn_model, abcd_model, combined_model, scaler
+    
     except Exception as e:
         st.error(f"Error loading models: {str(e)}")
-        st.error("Please ensure all model files are in the 'models/' directory")
+        st.error("The models were saved with a different TensorFlow version.")
+        st.error("**Solution**: Re-save the models with TensorFlow 2.15.0 or convert them.")
         return None, None, None, None
+
+# Load models
+cnn_model, abcd_model, combined_model, scaler = load_models()
+
+if cnn_model is None:
+    st.error("Models could not be loaded. Please check the model files.")
+else:
+    st.success("Models loaded successfully!")
 
 def preprocess_image_for_cnn(image, target_size=(224, 224)):
     """Preprocess image for CNN model"""
@@ -278,7 +301,7 @@ def create_abcd_radar_chart(features, feature_names):
 
 def display_educational_content():
     """Display educational content about melanoma"""
-    st.header(" Understanding Melanoma Detection")
+    st.header("Understanding Melanoma Detection")
     
     col1, col2 = st.columns(2)
     
@@ -435,7 +458,7 @@ def main():
                         st.plotly_chart(fig_combined, use_container_width=True)
                     
                     # ABCD Feature Analysis
-                    st.subheader("🔍 ABCD Feature Analysis")
+                    st.subheader("ABCD Feature Analysis")
                     
                     col1, col2 = st.columns([2, 1])
                     
@@ -462,7 +485,7 @@ def main():
                         st.markdown('</div>', unsafe_allow_html=True)
                     
                     # Feature Details Table
-                    st.subheader("📋 Detailed Feature Analysis")
+                    st.subheader("Detailed Feature Analysis")
                     
                     feature_df = pd.DataFrame({
                         'Feature': extractor.feature_names,
@@ -473,7 +496,7 @@ def main():
                     st.dataframe(feature_df, use_container_width=True)
                     
                     # Clinical Recommendations
-                    st.subheader("🏥 Clinical Recommendations")
+                    st.subheader("Clinical Recommendations")
                     
                     max_risk = max(cnn_prediction, abcd_prediction, combined_prediction)
                     
