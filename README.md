@@ -2,6 +2,10 @@
 
 Tested and created a model based on a CNN and ABCD criteria to act as a medical tool for identifying signs of melanoma on skin, all within the AI4ALL's cutting-edge AI4ALL Ignite accelerator.
 
+<img width="1913" height="939" alt="Screenshot 2025-08-03 at 17 50 23" src="https://github.com/user-attachments/assets/e1081552-3a15-46df-937c-03ec8e45f3f5" />
+
+<img width="1920" height="1080" alt="Screenshot 2025-08-03 at 18 48 52 (2)" src="https://github.com/user-attachments/assets/ad03ccda-f3cd-4af0-9382-e53642d94712" />
+
 ## Problem Statement
 
 Our research question is **How well can a CNN model trained on ABCD visual criteria detect early signs of melanoma?** and one of our main reasons for embarking on this project was because melanoma is one of the deadliest forms of skin cancer, however when detected early, the 5-year survival rate for melanoma is **99%**.
