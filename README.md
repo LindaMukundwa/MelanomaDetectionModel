@@ -1,4 +1,4 @@
-# Melanoma AI Detection Tool
+# Melanoma AI Detection Tool 🩺
 
 Tested and created a model based on a CNN and ABCD criteria to act as a medical tool for identifying signs of melanoma on skin, all within the AI4ALL's cutting-edge AI4ALL Ignite accelerator.
 
@@ -6,7 +6,7 @@ Tested and created a model based on a CNN and ABCD criteria to act as a medical 
 
 <img width="1373" height="683" alt="Screenshot 2025-08-04 at 19 11 51" src="https://github.com/user-attachments/assets/b67483e5-bcbb-45e0-931b-f121ef0d90b6" />
 
-# Problem Statement
+# Problem Statement 
 
 Our research question is **How well can a CNN model trained on ABCD visual criteria detect early signs of melanoma?** and one of our main reasons for embarking on this project was because melanoma is one of the deadliest forms of skin cancer, however when detected early, the 5-year survival rate for melanoma is **99%**.
 
@@ -23,7 +23,7 @@ In order to try and come up with a tool for this, we thought of using the ABCD m
 This type of research and this type of work is very helpful because it can help to advance work in this area so that people can have access to resources like this and from all types of backgrounds and skin tones. Its impacts will show the importance of this kind of work and the need for responsible and impactful AI.
 
 
-# Key Results
+# Key Results 📊
 Here are some of the plots we created from the results of our project to show the performance of the model. 
 <img width="1189" height="390" alt="download" src="https://github.com/user-attachments/assets/4841b0e3-d38d-4ba7-97cf-9b89723885bd" />
 
@@ -35,14 +35,14 @@ These show the results of the combined model on different metrics and in compari
 
 In order to accomplish this, we used ResNet50 and ImageNet to train the CNN based off the Gaussian blur and Otsu's threasholding to get key differences in the imaging. Then, we did a comprehensive training for the ABCD model based off different markers all with 15 epochs to learn for each model. Finally, a fusion between the CNN and ABCD was the combined model which endeed up exceeding the performance of all prior models. We accomplished feats like 96.4% AUC score as well as other key models from out 70/15/15 split of 1000 images. 
 
-# Data Sources
+# Data Sources 🔗
 Here is our base kaggle data source that was used in our project. The other was a custom one in our Google Drive. 
 
 Link: https://www.kaggle.com/datasets/farjanakabirsamanta/skin-cancer-dataset 
 
 EXAMPLE: Kaggle Datasets: Link to Kaggle Dataset
 
-# Installation
+# Installation 📦
 
 In order to use this model locally, make sure to start the python backend, check the requirements are all met then use streamlit to run the app. The following commands detail how to do this one by one after cloning this repository locally and opening your IDE.
 
@@ -53,7 +53,7 @@ python setup_development.py
 streamlit run app.py
 ```
 
-# Technologies Used
+# Technologies Used 
 These are a list of some of the technologies, libraries, and frameworks used in our project.
 
 Python
@@ -74,7 +74,7 @@ Numpy
 
 Matplotlib
 
-# Authors and Contributors
+# Authors and Contributors 👩‍💻
 
 This project was completed in collaboration with:
  
