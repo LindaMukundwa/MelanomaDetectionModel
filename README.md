@@ -4,7 +4,7 @@ Tested and created a model based on a CNN and ABCD criteria to act as a medical 
 
 <img width="1913" height="939" alt="Screenshot 2025-08-03 at 17 50 23" src="https://github.com/user-attachments/assets/e1081552-3a15-46df-937c-03ec8e45f3f5" />
 
-<img width="1920" height="1080" alt="Screenshot 2025-08-03 at 18 48 52 (2)" src="https://github.com/user-attachments/assets/ad03ccda-f3cd-4af0-9382-e53642d94712" />
+<img width="1373" height="683" alt="Screenshot 2025-08-04 at 19 11 51" src="https://github.com/user-attachments/assets/b67483e5-bcbb-45e0-931b-f121ef0d90b6" />
 
 ## Problem Statement
 
@@ -13,8 +13,11 @@ Our research question is **How well can a CNN model trained on ABCD visual crite
 In order to try and come up with a tool for this, we thought of using the ABCD markers to do these because they repressent 4 things to look out for that can detect signs of melanoma. These are:
 
 **A** is for asymmetry where half of the spot is not symmetrical to the other
+
 **B** is for border where there’s an irregular or undefined border on the spot
+
 **C** is for color where there are varying colors present on the spot in different areas
+
 **D** is for diameter where most melanomas are usually 6mm in diameter or smaller
 
 This type of research and this type of work is very helpful because it can help to advance work in this area so that people can have access to resources like this and from all types of backgrounds and skin tones. Its impacts will show the importance of this kind of work and the need for responsible and impactful AI.
@@ -40,6 +43,17 @@ Data Sources
 
 EXAMPLE: Kaggle Datasets: Link to Kaggle Dataset
 
+## Installation
+
+In order to use this model locally, make sure to start the python backend, check the requirements are all met then use streamlit to run the app. The following commands detail how to do this one by one after cloning this repository locally and opening your IDE.
+
+```bash
+source melanoma-env/bin/activate
+pip install -r requirements.txt
+python setup_development.py
+streamlit run app.py
+```
+
 ## Technologies Used
 These are a list the technologies, libraries, and frameworks used in your project.
 
@@ -53,8 +67,11 @@ Authors
 ## Authors and Contributors
 
 This project was completed in collaboration with:
-
+ 
 Linda Mukundwa (Linda.Mukundwa1@marist.edu)
+
 Serena Chen (schen172@u.rochester.edu)
+
 Erica Okeh (erica.okeh@bison.howard.edu)
+
 Marcellino Melika (marcellinomelika.college@gmail.com)
